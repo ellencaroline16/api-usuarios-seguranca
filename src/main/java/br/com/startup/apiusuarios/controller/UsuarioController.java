@@ -7,6 +7,7 @@ import br.com.startup.apiusuarios.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,22 +28,26 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     @GetMapping
     public ResponseEntity<List<UsuarioRespostaDTO>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR') or @usuarioService.buscarPorId(#id).email == authentication.name")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioRespostaDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERADOR')")
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioRespostaDTO> atualizar(@PathVariable Long id,
                                                           @Valid @RequestBody UsuarioAtualizacaoDTO dto) {
         return ResponseEntity.ok(usuarioService.atualizar(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) {
         usuarioService.excluir(id);
