@@ -41,7 +41,16 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/usuarios/cadastro", "/h2-console/**").permitAll()
+                .requestMatchers(
+                    "/auth/login",
+                    "/usuarios/cadastro",
+                    "/h2-console/**",
+                    "/",
+                    "/index.html",
+                    "/static/**",
+                    "/*.css",
+                    "/*.js"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .headers(headers -> headers.frameOptions(frame -> frame.disable()))
